@@ -15,20 +15,23 @@ import { mapGetters } from 'vuex'
 import Category from '@/components/Category'
 export default {
   data: () => ({
-    categories: []
+    categories: [],
   }),
-  async mounted() {
-    if (this.token_type) {
+  mounted() {
+    this.loadGenres()
+  },
+  methods: {
+    async loadGenres() {
       try {
         let { data } = await this.$axios.get(
           'https://api.spotify.com/v1/browse/categories?limit=50',
           {
             headers: {
               Authorization: `${this.token_type} ${this.access_token}`
-            }
+            },
           }
         )
-        this.categories = data.categories.items
+        this.categories = this.categories.concat(data.categories.items)
       } catch (e) {
         console.log(e)
       }

@@ -6,6 +6,7 @@
         <v-col v-for="(item, index) in releases" :key="index" cols="2">
           <Release :release="item"></Release>
         </v-col>
+        <div v-intersect="onIntersect"></div>
       </v-row>
     </v-container>
   </v-container>
@@ -16,23 +17,35 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      releases: []
+      releases: [],
+      limit: 25,
     }
   },
-  async mounted() {
-    try {
-      const { data } = await this.$axios.get(
-        'https://api.spotify.com/v1/browse/new-releases',
-        {
-          headers: {
-            Authorization: `${this.token_type} ${this.access_token}`
+  methods: {
+    onIntersect(entries, observer, isIntersecting) {
+      const el = entries[0]
+      if (el.isIntersecting) {
+        this.loadReleases()
+      }
+    },
+    async loadReleases() {
+      try {
+        const { data } = await this.$axios.get(
+          'https://api.spotify.com/v1/browse/new-releases',
+          {
+            headers: {
+              Authorization: `${this.token_type} ${this.access_token}`
+            },
           }
-        }
-      )
-      this.releases = data.albums.items
-    } catch (e) {
-      console.log(e)
+        )
+        this.releases = this.releases.concat(data.albums.items)
+      } catch (e) {
+        console.log(e)
+      }
     }
+  },
+  mounted() {
+    // this.loadReleases()
   },
   components: {
     Release
