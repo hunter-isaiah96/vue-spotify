@@ -1,5 +1,5 @@
 export default async function({ store, redirect }) {
-  if (!!store.state.auth.refresh_token) {
+  if (store.state.auth.refresh_token) {
     try {
       let { data } = await store.$axios.get(
         `${process.env.baseUrl}/api/refresh`,

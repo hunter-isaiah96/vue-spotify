@@ -33,8 +33,9 @@ module.exports = {
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/vuex-persist', ssr: false },
-    { src: '~/plugins/vuebar', ssr: false }
+    { src: '~/plugins/vuex-persist', ssr: false},
+    '~/plugins/axios',
+    '~/plugins/vue-clipboard'
   ],
   /*
    ** Nuxt.js dev-modules
@@ -51,7 +52,9 @@ module.exports = {
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+    baseURL: 'https://api.spotify.com/v1'
+  },
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module

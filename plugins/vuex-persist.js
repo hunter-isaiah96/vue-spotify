@@ -5,7 +5,8 @@ export default ({ store }) => {
       key: 'vuex',
       storage: window.localStorage,
       reducer: (state) => ({
-        auth: state.auth
+        auth: state.auth,
+        user: state.user
       })
     }).plugin(store)
 }

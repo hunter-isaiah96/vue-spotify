@@ -4,31 +4,6 @@
       <nuxt />
     </v-content>
   </v-app>
-  <!-- <v-row class="flex-grow-1" no-gutters>
-          <v-col cols="auto">
-            <v-card height="100%" width="250" color="#121212" tile>
-              <v-list color="#121212" dense>
-                <v-list-item-group v-model="item">
-                  <v-list-item v-for="(item, index) in sidebar.fixed" :key="index">
-                    <v-list-item-icon>
-                      <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-item-icon>
-                    <v-list-item-content>
-                      <v-list-item-title>{{ item.text }}</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
-              </v-list>
-            </v-card>
-          </v-col>
-          <v-col class="no-overflow">
-            <nuxt />
-          </v-col>
-        </v-row>
-        <v-row class="flex-grow-0" no-gutters>
-          <Player></Player>
-  </v-row>-->
-  <!-- <player></player> -->
 </template>
 
 <script>

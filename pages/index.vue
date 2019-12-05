@@ -1,27 +1,34 @@
 <template>
   <div class="d-flex flex-column main-container">
     <div class="d-flex flex-grow-1 no-overflow">
-      <v-card height="100%" width="250" color="#121212" tile>
-        <v-list color="#121212" dense>
-          <v-list-item-group v-model="item">
-            <v-list-item v-for="(item, index) in sidebar.fixed" :key="index">
-              <v-list-item-icon>
-                <v-icon>{{ item.icon }}</v-icon>
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title>{{ item.text }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
+      <v-card min-width="230" max-width="230" color="#040404" tile>
+        <v-img class="my-5 mx-4" :src="require('@/assets/logo.png')" width="130" />
+        <v-tabs
+          class="navigation-tabs d-flex flex-grow-1"
+          background-color="transparent"
+          slider-size="5"
+          color="white"
+          slider-color="primary"
+          vertical
+          opional
+        >
+          <v-tab to="/browse" class="justify-start">
+            <v-icon left>mdi-home</v-icon>Browse
+          </v-tab>
+          <v-tab class="justify-start">
+            <v-icon left>mdi-account</v-icon>Search
+          </v-tab>
+          <v-tab class="justify-start">
+            <v-icon left>mdi-book-open-variant</v-icon>Library
+          </v-tab>
+        </v-tabs>
       </v-card>
-      <nuxt-child class="content-wrapper pa-0"></nuxt-child>
+      <nuxt-child class="content-wrapper pa-0 flex-grow-1"></nuxt-child>
     </div>
     <player></player>
   </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
 import Player from '@/components/Player'
 
 export default {
@@ -37,13 +44,16 @@ export default {
       }
     }
   },
-  async mounted() {},
+  async mounted() {
+    let { data } = await this.$axios.get('https://api.spotify.com/v1/me')
+    this.$store.dispatch('user/setUserProfile', data)
+  },
   components: {
     Player
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .no-overflow {
   overflow: hidden;
 }
@@ -53,5 +63,10 @@ export default {
 }
 .main-container {
   height: 100vh;
+}
+.navigation-tabs {
+  .v-item-group {
+    flex: 1;
+  }
 }
 </style>

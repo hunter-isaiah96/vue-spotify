@@ -28,7 +28,6 @@ export default {
       message: null
     }
   },
-  components: {},
   methods: {
     spotifyAuth() {
       let auth = `${this.spotifyCreds.SPOTIFY_AUTH_URL}?client_id=${this.spotifyCreds.SPOTIFY_CLIENT_ID}&redirect_uri=${this.spotifyCreds.SPOTIFY_REDIRECT_URI}&response_type=${this.spotifyCreds.SPOTIFY_RESPONSE_TYPE}&scope=${this.spotifyCreds.SPOTIFY_SCOPE}`,
@@ -47,7 +46,7 @@ export default {
     window.addEventListener(
       'message',
       ({ data }) => {
-        if (data.from == 'Spotify') {
+        if (data.from == 'Spotify')
           if (data.message) {
             this.message = data.message
           } else {
@@ -55,7 +54,6 @@ export default {
               this.$router.push({ name: 'index-browse' })
             })
           }
-        }
       },
       false
     )

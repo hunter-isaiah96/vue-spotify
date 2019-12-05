@@ -22,7 +22,6 @@ export default {
         })
         this.postMessage(token.data)
       } catch ({ response }) {
-        console.log(response)
         this.postMessage({
           message: response.data.error_description
         })
