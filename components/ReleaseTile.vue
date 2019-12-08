@@ -7,6 +7,7 @@
       </div>
       <span v-for="(artist, index) in release.artists" :key="index">
         <nuxt-link
+          data-cy="artist-link"
           class="artist-link"
           :to="{ name: 'index-artist-id', params: { id: artist.id } }"
           exact

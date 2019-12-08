@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Genres & Moods</h3>
-    <v-row>
+    <v-row data-cy="genre-list">
       <v-col v-for="(category, index) in categories" :key="index" cols="2">
         <Category :src="category.icons[0].url" :name="category.name"></Category>
       </v-col>

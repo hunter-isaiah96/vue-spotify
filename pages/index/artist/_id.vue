@@ -11,7 +11,7 @@
           <div
             class="font-weight-thin text-uppercase grey--text text--lighten-2"
           >{{ artist.followers.total.toLocaleString() }} Followers</div>
-          <div class="display-3 font-weight-black py-4">{{ artist.name }}</div>
+          <div data-cy="artist-name" class="display-3 font-weight-black py-4">{{ artist.name }}</div>
           <div class="my-6">
             <v-btn class="mr-3" min-width="145" min-height="40" color="primary" rounded>Play</v-btn>
             <v-btn class="mr-3" min-width="145" min-height="40" rounded outlined>Follow</v-btn>
@@ -80,7 +80,6 @@ export default {
   },
   methods: {
     async loadData() {
-      console.log(this.env)
       let artist = await this.$axios.get(
         `https://api.spotify.com/v1/artists/${this.$route.params.id}`
       )

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>New albums & singles</h3>
-    <v-row>
+    <v-row data-cy="new-releases-list">
       <v-col v-for="(item, index) in releases" :key="index" cols="2">
         <ReleaseTile :release="item"></ReleaseTile>
       </v-col>
