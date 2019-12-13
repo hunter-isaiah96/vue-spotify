@@ -1,27 +1,20 @@
 <template>
   <div class="d-flex flex-column main-container">
     <div class="d-flex flex-grow-1 no-overflow">
-      <v-card min-width="230" max-width="230" color="#040404" tile>
-        <v-img class="my-5 mx-4" :src="require('@/assets/logo.png')" width="130" />
-        <v-tabs
-          class="navigation-tabs d-flex flex-grow-1"
-          background-color="transparent"
-          slider-size="5"
-          color="white"
-          slider-color="primary"
-          vertical
-          opional
-        >
-          <v-tab to="/browse" class="justify-start">
-            <v-icon left>mdi-home</v-icon>Browse
-          </v-tab>
-          <v-tab class="justify-start">
-            <v-icon left>mdi-account</v-icon>Search
-          </v-tab>
-          <v-tab class="justify-start">
-            <v-icon left>mdi-book-open-variant</v-icon>Library
-          </v-tab>
-        </v-tabs>
+      <v-card class="mx-auto" min-width="260" color="#040404" tile>
+        <v-list v-for="(section, key, index) in sidebar" :key="index" color="transparent" rounded>
+          <v-list-item-group color="primary">
+            <v-subheader class="text-capitalize">{{key}}</v-subheader>
+            <v-list-item v-for="(item, i) in section" :key="i">
+              <v-list-item-icon class="mr-5">
+                <v-icon v-text="item.icon"></v-icon>
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="item.text"></v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
       </v-card>
       <nuxt-child class="content-wrapper pa-0 flex-grow-1"></nuxt-child>
     </div>
@@ -30,23 +23,51 @@
 </template>
 <script>
 import Player from '@/components/Player'
-
 export default {
   middleware: 'authentication',
   data() {
     return {
       item: 0,
       sidebar: {
-        fixed: [
-          { text: 'Browse', icon: 'mdi-folder-multiple-outline' },
-          { text: 'Radio', icon: 'mdi-access-point' }
+        discover: [
+          {
+            text: 'Home',
+            icon: 'mdi-home',
+            to: '/browse'
+          },
+          { text: 'Search', icon: 'mdi-magnify', to: '' },
+          { text: 'Library', icon: 'mdi-book-open-variant', to: '' }
+        ],
+        bro: [
+          {
+            text: 'Home',
+            icon: 'mdi-home',
+            to: '/browse'
+          },
+          { text: 'Search', icon: 'mdi-magnify', to: '' },
+          { text: 'Library', icon: 'mdi-book-open-variant', to: '' }
         ]
       }
     }
   },
   async mounted() {
-    let { data } = await this.$axios.get('https://api.spotify.com/v1/me')
-    this.$store.dispatch('user/setUserProfile', data)
+    try {
+      let { data } = await this.$axios.get('https://api.spotify.com/v1/me')
+      this.$store.dispatch('user/setUserProfile', data)
+    } catch (e) {
+      if (e.response) {
+        $nuxt.error({
+          statusCode: e.response.status,
+          message: e.response.data.error.message
+        })
+      } else if (e.request) {
+        console.log('bro2')
+        // error({ message: 'Network Error' })
+      } else {
+        console.log('bro3')
+        // error({ message: err.message })
+      }
+    }
   },
   components: {
     Player
@@ -54,9 +75,6 @@ export default {
 }
 </script>
 <style lang="scss">
-.no-overflow {
-  overflow: hidden;
-}
 .content-wrapper {
   height: 100%;
   overflow-y: auto;

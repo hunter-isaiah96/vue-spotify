@@ -1,0 +1,10 @@
+@refresh_token = AQB6dLtClcpNQnokLI1oDuWX-3gOTglW1WJDikHj9NN7_K9gm5-nwWKAF8e1A5fvceVptOJK-Rg7l_zuJ4rQlA7vKpSXTUiQkoR1M6Zmc76-2G1A1WYKAQm-lkAgGTZWoM8
+@spotify_url = https://api.spotify.com/v1/
+# @name getCategories
+GET http://localhost:3000/api/refresh?refresh_token={{refresh_token}}
+Content-Type: application/json
+
+###
+GET  {{spotify_url}}browse/categories
+Content-Type: application/json
+Authorization: Bearer {{getCategories.response.body.access_token}}

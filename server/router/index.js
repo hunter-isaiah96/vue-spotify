@@ -58,4 +58,6 @@ router.get('/refresh', async function(req, res) {
   }
 })
 
+router.get('/bruh', function(req, res) {})
+
 module.exports = router

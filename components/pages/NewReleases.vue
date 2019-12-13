@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>New albums & singles</h3>
-    <v-row>
+    <v-row data-cy="new-releases-list">
       <v-col v-for="(item, index) in releases" :key="index" cols="2">
         <ReleaseTile :release="item"></ReleaseTile>
       </v-col>
@@ -27,9 +27,22 @@ export default {
       }
     },
     async loadReleases() {
-      const { data } = await this.$axios.get(this.next)
-      this.releases = this.releases.concat(data.albums.items)
-      this.next = data.albums.next
+      try {
+        const { data } = await this.$axios.get(this.next)
+        this.releases = [...this.releases, ...data.albums.items]
+        this.next = data.albums.next
+      } catch (e) {
+        if (e.response) {
+          $nuxt.error({
+            statusCode: e.response.status,
+            message: e.response.data.error.message
+          })
+        } else if (e.request) {
+          $nuxt.error({ message: 'Network Error' })
+        } else {
+          $nuxt.error({ message: err.message })
+        }
+      }
     }
   },
   components: {

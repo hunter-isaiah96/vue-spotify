@@ -17,23 +17,22 @@ module.exports = {
         content: process.env.npm_package_description || ''
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    script: [{ src: 'https://sdk.scdn.co/spotify-player.js' }]
   },
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: '#fff' },
+  loading: false,
   /*
    ** Global CSS
    */
-  css: [
-    '@/assets/main.scss'
-  ],
+  css: ['@/assets/main.scss'],
   /*
    ** Plugins to load before mounting the App
    */
   plugins: [
-    { src: '~/plugins/vuex-persist', ssr: false},
+    { src: '~/plugins/vuex-persist', ssr: false },
     '~/plugins/axios',
     '~/plugins/vue-clipboard'
   ],
@@ -99,6 +98,10 @@ module.exports = {
       const browseIndex = indexChildren.findIndex(
         route => route.name === 'index-browse'
       )
+      // Find the index of the artist component in the children array of the index route
+      const artistIndex = indexChildren.findIndex(
+        route => route.name === 'index-artist-id'
+      )
       // If someone lands on on the main URL, redirect them to /browse/genres
       routes[indexIndex] = {
         ...routes[indexIndex],
@@ -122,6 +125,18 @@ module.exports = {
           name: 'index-browse-newreleases',
           path: 'newreleases',
           component: resolve(__dirname, 'components/pages/NewReleases.vue')
+        }
+      ]
+      // Remove the name from the artist route and add a default component route
+      let properties = routes[indexIndex].children[artistIndex]
+      delete properties.name
+      routes[indexIndex].children[artistIndex] = properties
+      // Add routes to the artist components children
+      routes[indexIndex].children[artistIndex].children = [
+        {
+          name: 'index-artist-id',
+          path: '',
+          component: resolve(__dirname, 'components/pages/ArtistOverview.vue')
         }
       ]
     }

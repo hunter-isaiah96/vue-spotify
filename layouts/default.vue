@@ -44,7 +44,7 @@ html {
 
   /* Handle */
   &::-webkit-scrollbar-thumb {
-    background: #5A5A5A;
+    background: #5a5a5a;
   }
 }
 </style>

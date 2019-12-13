@@ -1,6 +1,4 @@
-<template></template>
 <script>
-import spotifyCreds from '@/spotify.creds'
 export default {
   methods: {
     postMessage(values) {
@@ -9,24 +7,26 @@ export default {
     }
   },
   async mounted() {
-    if (this.$route.query.error) {
+    if (this.$route.query.error)
       this.postMessage({
         message: 'Access Denied'
       })
-    } else {
+    else
       try {
-        let token = await this.$axios.get(`${process.env.baseUrl}/api/token`, {
-          params: {
-            code: this.$route.query.code
+        let { data } = await this.$axios.get(
+          `${process.env.baseUrl}/api/token`,
+          {
+            params: {
+              code: this.$route.query.code
+            }
           }
-        })
-        this.postMessage(token.data)
+        )
+        this.postMessage(data)
       } catch ({ response }) {
         this.postMessage({
           message: response.data.error_description
         })
       }
-    }
     window.close()
   }
 }

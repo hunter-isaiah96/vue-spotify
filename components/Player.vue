@@ -3,15 +3,24 @@
     <v-container class="player py-0" fluid>
       <v-row align="center">
         <v-col cols="4">
-          <v-row>
+          <v-row v-if="playerCurrentTrack">
             <v-col cols="auto">
               <v-avatar>
-                <img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John" />
+                <img :src="playerCurrentTrack.album.images[0].url" alt="John" />
               </v-avatar>
             </v-col>
             <v-col cols="6" align-self="center">
-              <h4>Hello</h4>
-              <h5 class="mb-0 grey--text">Jay-Z</h5>
+              <h4>{{ playerCurrentTrack.name }}</h4>
+              <h5 class="mb-0 grey--text">
+                <span v-for="(artist, index) in playerCurrentTrack.artists" :key="index">
+                  <nuxt-link
+                    data-cy="artist-link"
+                    class="artist-link"
+                    :to="{ name: 'index-artist-id', params: { id: artist.id } }"
+                  >{{ artist.name }}</nuxt-link>
+                  <span v-if="index < playerCurrentTrack.length - 1">,</span>
+                </span>
+              </h5>
             </v-col>
           </v-row>
         </v-col>
@@ -85,7 +94,7 @@
     <!-- <div class="py-0 px-5 primary text-right current-device caption" v-if="currentDevice">
       <v-icon>mdi-volume-high</v-icon>You're listening on
       <span class="font-weight-bold">{{ currentDevice.name }}</span>
-    </div> -->
+    </div>-->
   </v-container>
 </template>
 <script>
@@ -93,31 +102,72 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      seekPosition: 50,
+      seekPosition: 50
     }
   },
   async mounted() {
     try {
       let devices = await this.$axios.get(
-        'https://api.spotify.com/v1/me/player/devices',
-        {
-          headers: {
-            Authorization: `${this.token_type} ${this.access_token}`
-          }
-        }
+        'https://api.spotify.com/v1/me/player/devices'
       )
       this.$store.dispatch('player/setAvailableDevices', devices.data.devices)
     } catch (e) {
       console.log(e)
     }
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      // You can now initialize Spotify.Player and use the SDK
-      console.log('Ready')
+    async function waitForSpotifyWebPlaybackSDKToLoad() {
+      return new Promise(resolve => {
+        if (window.Spotify) {
+          resolve(window.Spotify)
+        } else {
+          window.onSpotifyWebPlaybackSDKReady = () => {
+            resolve(window.Spotify)
+          }
+        }
+      })
     }
-    
-  },
 
+    ;(async () => {
+      const { Player } = await waitForSpotifyWebPlaybackSDKToLoad()
+      const player = new Player({
+        name: 'Vue-Spotify',
+        getOAuthToken: cb => cb(this.access_token)
+      })
+      // Error handling
+      player.addListener('initialization_error', ({ message }) => {
+        console.error(message)
+      })
+      player.addListener('authentication_error', ({ message }) => {
+        console.log('Auth Error')
+      })
+      player.addListener('account_error', ({ message }) => {
+        console.error(message)
+      })
+      player.addListener('playback_error', ({ message }) => {
+        console.error(message)
+      })
+
+      // Playback status updates
+      player.addListener('player_state_changed', state => {
+        this.$store.dispatch(
+          'player/setPlayerCurrentTrack',
+          state.track_window.current_track
+        )
+      })
+
+      // Ready
+      player.addListener('ready', ({ device_id }) => {
+        console.log('Ready with Device ID', device_id)
+      })
+
+      // Not Ready
+      player.addListener('not_ready', ({ device_id }) => {
+        console.log('Device ID has gone offline', device_id)
+      })
+
+      player.connect()
+    })()
+  },
   computed: {
     currentItem() {
       return this.availableDevices.findIndex(device => device.is_active)
