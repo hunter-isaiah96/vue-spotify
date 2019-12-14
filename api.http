@@ -1,17 +1,25 @@
 @expired_token = BQCeUIxmPBqWOAPdEzExaYv0sAT5iL2Y4ucIFidSI29DABbqRgwRnB9jNJ5YvpJKhDVIwfWF5mzm2BRYwzn8GI5fn5UzXZjs1KJZYP4cFOO4KY8ipVOzoCFoNIGEeCoXnZyVxDIyVLpyFtQKvLavU3qX4I38027e8hJDe_iDISxWY1ZxTQ
 @refresh_token = AQB6dLtClcpNQnokLI1oDuWX-3gOTglW1WJDikHj9NN7_K9gm5-nwWKAF8e1A5fvceVptOJK-Rg7l_zuJ4rQlA7vKpSXTUiQkoR1M6Zmc76-2G1A1WYKAQm-lkAgGTZWoM8
+@artist = 6KImCVD70vtIoJWnq6nGn3/
 @spotify_url = https://api.spotify.com/v1/
-# @name getCategories
+
+# @name getRefreshToken
 GET http://localhost:3000/api/refresh?refresh_token={{refresh_token}}
 Content-Type: application/json
 
 ###
-GET  {{spotify_url}}browse/categories
+GET {{spotify_url}}browse/categories
 Content-Type: application/json
-Authorization: Bearer {{getCategories.response.body.access_token}}
+Authorization: Bearer {{getRefreshToken.response.body.access_token}}
 
 ###
-# @name geBadResponse
+GET {{spotify_url}}artists/{{artist}}
+Content-Type: application/json
+Authorization: Bearer {{getRefreshToken.response.body.access_token}}
+
+###
+# @name getBadResponse
 GET {{spotify_url}}browse/categories
 Content-Type: application/json
 Authorization: Bearer {{expired_token}}
+

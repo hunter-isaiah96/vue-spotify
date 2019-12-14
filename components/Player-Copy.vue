@@ -2,62 +2,56 @@
   <v-container class="pa-0" fluid>
     <v-container class="player py-0" fluid>
       <v-row align="center">
-        <v-col cols="2">
-          <v-row justify="center">
-            <v-btn class="mx-2" text icon small>
-              <v-hover v-slot:default="{ hover }">
-                <v-icon size="20" :color="hover ? 'white' : 'grey'">mdi-shuffle-variant</v-icon>
-              </v-hover>
-            </v-btn>
-            <v-btn class="mx-2" text icon small>
-              <v-hover v-slot:default="{ hover }">
-                <v-icon size="20" :color="hover ? 'white' : 'grey'">mdi-skip-previous</v-icon>
-              </v-hover>
-            </v-btn>
-            <v-btn class="mx-2" text icon small>
-              <v-hover v-slot:default="{ hover }">
-                <v-icon size="35" :color="hover ? 'white' : 'grey'">mdi-play-circle</v-icon>
-              </v-hover>
-            </v-btn>
-            <v-btn class="mx-2" text icon small>
-              <v-hover v-slot:default="{ hover }">
-                <v-icon size="20" :color="hover ? 'white' : 'grey'">mdi-skip-next</v-icon>
-              </v-hover>
-            </v-btn>
-            <v-btn class="mx-2" text icon small>
-              <v-hover v-slot:default="{ hover }">
-                <v-icon size="20" :color="hover ? 'white' : 'grey'">mdi-repeat</v-icon>
-              </v-hover>
-            </v-btn>
+        <v-col cols="4">
+          <v-row v-if="playerCurrentTrack">
+            <v-col cols="auto">
+              <v-avatar>
+                <img :src="playerCurrentTrack.album.images[0].url" alt="John" />
+              </v-avatar>
+            </v-col>
+            <v-col cols="6" align-self="center">
+              <h4>{{ playerCurrentTrack.name }}</h4>
+              <h5 class="mb-0 grey--text">
+                <span v-for="(artist, index) in playerCurrentTrack.artists" :key="index">
+                  <nuxt-link
+                    data-cy="artist-link"
+                    class="artist-link"
+                    :to="{ name: 'index-artist-id', params: { id: artist.id } }"
+                  >{{ artist.name }}</nuxt-link>
+                  <span v-if="index < playerCurrentTrack.length - 1">,</span>
+                </span>
+              </h5>
+            </v-col>
           </v-row>
         </v-col>
-        <v-col cols="7">
-          <v-row>
-            <v-col class="py-0" cols="auto">
-              <v-img :src="require('@/assets/placeholder.jpg')" max-width="60" max-height="60"></v-img>
+        <v-col cols="4">
+          <v-row justify="center">
+            <v-btn class="mx-2" color="grey" text icon>
+              <v-icon size="35">mdi-skip-previous</v-icon>
+            </v-btn>
+            <v-btn class="mx-2" color="grey" text icon>
+              <v-icon size="45">mdi-play-circle-outline</v-icon>
+            </v-btn>
+            <v-btn class="mx-2" color="grey" text icon>
+              <v-icon size="35">mdi-skip-next</v-icon>
+            </v-btn>
+          </v-row>
+          <v-row class="mt-2">
+            <v-col cols="auto" align-self="center" class="py-0">
+              <span>01:23</span>
             </v-col>
-            <v-col class="py-0 pl-0" align-self="center">
-              <v-row>
-                <v-col class="d-flex py-0 mx-2 align-center">
-                  <p class="ma-0">
-                    Song Title
-                    <span class="caption ml-2 grey--text">Artist Name</span>
-                  </p>
-                  <v-spacer></v-spacer>
-                  <span class="caption grey--text text--lighten-1">1:30 / 3:00</span>
-                </v-col>
-              </v-row>
-              <v-row>
-                <v-col class="d-flex justify-center align-center py-0">
-                  <v-slider
-                    v-model="seekPosition"
-                    track-color="grey"
-                    step="0"
-                    color="primary"
-                    hide-details
-                  ></v-slider>
-                </v-col>
-              </v-row>
+            <v-col class="d-flex justify-center align-center py-0">
+              <v-slider
+                v-model="seekPosition"
+                track-color="grey"
+                step="0"
+                color="primary"
+                class="mb-0 seek-bar"
+                hide-details
+              ></v-slider>
+            </v-col>
+            <v-col cols="auto" class="py-0">
+              <span>03:20</span>
             </v-col>
           </v-row>
         </v-col>
@@ -97,10 +91,10 @@
         </v-col>
       </v-row>
     </v-container>
-    <div class="py-0 px-5 primary text-right current-device caption" v-if="currentDevice">
+    <!-- <div class="py-0 px-5 primary text-right current-device caption" v-if="currentDevice">
       <v-icon>mdi-volume-high</v-icon>You're listening on
       <span class="font-weight-bold">{{ currentDevice.name }}</span>
-    </div>
+    </div>-->
   </v-container>
 </template>
 <script>
@@ -120,6 +114,59 @@ export default {
     } catch (e) {
       console.log(e)
     }
+
+    async function waitForSpotifyWebPlaybackSDKToLoad() {
+      return new Promise(resolve => {
+        if (window.Spotify) {
+          resolve(window.Spotify)
+        } else {
+          window.onSpotifyWebPlaybackSDKReady = () => {
+            resolve(window.Spotify)
+          }
+        }
+      })
+    }
+
+    ;(async () => {
+      const { Player } = await waitForSpotifyWebPlaybackSDKToLoad()
+      const player = new Player({
+        name: 'Vue-Spotify',
+        getOAuthToken: cb => cb(this.access_token)
+      })
+      // Error handling
+      player.addListener('initialization_error', ({ message }) => {
+        console.error(message)
+      })
+      player.addListener('authentication_error', ({ message }) => {
+        console.log('Auth Error')
+      })
+      player.addListener('account_error', ({ message }) => {
+        console.error(message)
+      })
+      player.addListener('playback_error', ({ message }) => {
+        console.error(message)
+      })
+
+      // Playback status updates
+      player.addListener('player_state_changed', state => {
+        this.$store.dispatch(
+          'player/setPlayerCurrentTrack',
+          state.track_window.current_track
+        )
+      })
+
+      // Ready
+      player.addListener('ready', ({ device_id }) => {
+        console.log('Ready with Device ID', device_id)
+      })
+
+      // Not Ready
+      player.addListener('not_ready', ({ device_id }) => {
+        console.log('Device ID has gone offline', device_id)
+      })
+
+      player.connect()
+    })()
   },
   computed: {
     currentItem() {

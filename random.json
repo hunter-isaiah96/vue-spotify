@@ -1,0 +1,27 @@
+{
+  "auth": {
+    "access_token": "BQBNI6zaB4NC6DyHGBPhFzOGZ9YQUmBMFMn8ykqgvUdrey0Q3g2v84s7H408hfBKfabC97RhTmJdZ0g3XoXSATEZtKm-iNr5V_ZANtP-X-tKWBG6-8_Edaj4QBz85_uUYcHPhrU3KqdzSR3HDe-ccN1ej5YqIdaWdZzqfleJsmh8p3bm2Q",
+    "token_type": "Bearer",
+    "scope": "streaming user-read-playback-state user-read-currently-playing user-read-email user-read-private",
+    "expires": 1576280739150,
+    "refresh_token": "AQB6dLtClcpNQnokLI1oDuWX-3gOTglW1WJDikHj9NN7_K9gm5-nwWKAF8e1A5fvceVptOJK-Rg7l_zuJ4rQlA7vKpSXTUiQkoR1M6Zmc76-2G1A1WYKAQm-lkAgGTZWoM8"
+  },
+  "user": {
+    "userProfile": {
+      "country": "US",
+      "display_name": "hunter.isaiah96",
+      "email": "hunter.isaiah96@gmail.com",
+      "explicit_content": { "filter_enabled": false, "filter_locked": false },
+      "external_urls": {
+        "spotify": "https://open.spotify.com/user/hunter.isaiah96"
+      },
+      "followers": { "href": null, "total": 2 },
+      "href": "https://api.spotify.com/v1/users/hunter.isaiah96",
+      "id": "hunter.isaiah96",
+      "images": [],
+      "product": "premium",
+      "type": "user",
+      "uri": "spotify:user:hunter.isaiah96"
+    }
+  }
+}

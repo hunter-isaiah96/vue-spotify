@@ -11,12 +11,7 @@ export default function({ $axios, store }) {
   $axios.onError(async err => {
     if (err.response && err.response.status === 401) {
       const originalRequest = err.config
-      let newToken = await $axios.get(`${process.env.baseUrl}/api/refresh`, {
-        params: {
-          refresh_token: store.state.auth.refresh_token
-        }
-      })
-      await store.dispatch('auth/setToken', newToken.data)
+      await store.dispatch('auth/refreshToken')
       originalRequest.headers.Authorization = `${store.state.auth.token_type} ${store.state.auth.access_token}`
       return $axios(originalRequest)
     }

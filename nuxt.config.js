@@ -17,8 +17,8 @@ module.exports = {
         content: process.env.npm_package_description || ''
       }
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
-    script: [{ src: 'https://sdk.scdn.co/spotify-player.js' }]
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }]
+    // script: [{ src: 'https://sdk.scdn.co/spotify-player.js' }]
   },
   /*
    ** Customize the progress-bar color
@@ -52,7 +52,7 @@ module.exports = {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: 'https://api.spotify.com/v1'
+    baseURL: 'https://api.spotify.com/v1/'
   },
   /*
    ** vuetify module configuration
